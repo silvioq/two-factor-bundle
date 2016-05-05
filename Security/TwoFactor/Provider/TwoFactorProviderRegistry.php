@@ -90,7 +90,8 @@ class TwoFactorProviderRegistry implements AuthenticationHandlerInterface
                 }
                 else
                 {
-                    if( $this->eventDispatcher->hasListeners( TwoFactorAuthFailureEvent::NAME ) )
+                    if( strtolower( $context->getRequest()->getMethod() ) == 'post' &&
+                        $this->eventDispatcher->hasListeners( TwoFactorAuthFailureEvent::NAME ) )
                     {
                         $this->eventDispatcher->dispatch( TwoFactorAuthFailureEvent::NAME, new TwoFactorAuthFailureEvent() );
                     }
