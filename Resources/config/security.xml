@@ -34,6 +34,7 @@
 		</service>
 		<service id="scheb_two_factor.provider_registry" class="%scheb_two_factor.provider_registry.class%">
 			<argument type="service" id="scheb_two_factor.session_flag_manager" />
+      <argument type="service" id="event_dispatcher" />
 			<argument /> <!-- Two-factor providers -->
 		</service>
 		<service id="scheb_two_factor.backup_code_validator" class="%scheb_two_factor.backup_code_validator.class%">

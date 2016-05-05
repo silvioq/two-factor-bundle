@@ -6,6 +6,10 @@ use Scheb\TwoFactorBundle\Security\TwoFactor\AuthenticationHandlerInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Session\SessionFlagManager;
 use Scheb\TwoFactorBundle\Security\TwoFactor\AuthenticationContext;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthEvent;
+use Scheb\TwoFactorBundle\Security\TwoFactor\Event\TwoFactorAuthFailureEvent;
 
 class TwoFactorProviderRegistry implements AuthenticationHandlerInterface
 {
@@ -24,14 +28,22 @@ class TwoFactorProviderRegistry implements AuthenticationHandlerInterface
     private $providers;
 
     /**
+     * Event dispatcher
+     *
+     * @var EventDispatcher
+     */
+    private $eventDispatcher;
+
+    /**
      * Initialize with an array of registered two-factor providers.
      *
      * @param SessionFlagManager $flagManager
      * @param array              $providers
      */
-    public function __construct(SessionFlagManager $flagManager, $providers = array())
+    public function __construct(SessionFlagManager $flagManager, EventDispatcherInterface $eventDispatcher, $providers = array())
     {
         $this->flagManager = $flagManager;
+        $this->eventDispatcher = $eventDispatcher;
         $this->providers = $providers;
     }
 
@@ -70,7 +82,18 @@ class TwoFactorProviderRegistry implements AuthenticationHandlerInterface
 
                 // Set authentication completed
                 if ($context->isAuthenticated()) {
+                    if( $this->eventDispatcher->hasListeners( TwoFactorAuthEvent::NAME ) )
+                    {
+                        $this->eventDispatcher->dispatch( TwoFactorAuthEvent::NAME, new TwoFactorAuthEvent() );
+                    }
                     $this->flagManager->setComplete($providerName, $token);
+                }
+                else
+                {
+                    if( $this->eventDispatcher->hasListeners( TwoFactorAuthFailureEvent::NAME ) )
+                    {
+                        $this->eventDispatcher->dispatch( TwoFactorAuthFailureEvent::NAME, new TwoFactorAuthFailureEvent() );
+                    }
                 }
 
                 // Return response

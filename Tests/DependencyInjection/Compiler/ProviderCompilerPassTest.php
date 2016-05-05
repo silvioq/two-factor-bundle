@@ -102,7 +102,7 @@ class ProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
         $this->registryDefinition
             ->expects($this->once())
             ->method('replaceArgument')
-            ->with(1, array());
+            ->with(2, array());
         $this->voterDefinition
             ->expects($this->once())
             ->method('replaceArgument')
@@ -126,7 +126,7 @@ class ProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
         $this->registryDefinition
             ->expects($this->once())
             ->method('replaceArgument')
-            ->with(1, array('providerAlias' => new Reference('serviceId')));
+            ->with(2, array('providerAlias' => new Reference('serviceId')));
         $this->voterDefinition
             ->expects($this->once())
             ->method('replaceArgument')

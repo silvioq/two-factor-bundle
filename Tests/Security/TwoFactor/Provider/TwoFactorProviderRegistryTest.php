@@ -28,9 +28,13 @@ class TwoFactorProviderRegistryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = $this->getMock('Scheb\TwoFactorBundle\Security\TwoFactor\Provider\TwoFactorProviderInterface');
+        $this->eventDispatcher = $this->getMockBuilder("Symfony\Component\EventDispatcher\EventDispatcher" )
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->registry = new TwoFactorProviderRegistry($this->flagManager, array('test' => $this->provider));
+        $this->provider = $this->getMock('Scheb\TwoFactorBundle\Security\TwoFactor\Provider\TwoFactorProviderInterface');
+        $this->registry = new TwoFactorProviderRegistry($this->flagManager, $this->eventDispatcher, array('test' => $this->provider));
+
     }
 
     private function getToken()
